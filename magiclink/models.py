@@ -21,6 +21,12 @@ class MagicLinkError(Exception):
     pass
 
 
+def clean_email_text(text):
+    # Normalize the Unicode string and safely encode/decode to handle edge cases
+    normalized = unicodedata.normalize("NFKC", text)
+    return normalized.encode("utf-8", "replace").decode("utf-8")
+
+
 class MagicLink(models.Model):
     email = models.EmailField()
     token = models.TextField()
@@ -83,8 +89,8 @@ class MagicLink(models.Model):
             'token_uses': settings.TOKEN_USES,
             'style': settings.EMAIL_STYLES,
         }
-        plain = render_to_string(settings.EMAIL_TEMPLATE_NAME_TEXT, context)
-        html = render_to_string(settings.EMAIL_TEMPLATE_NAME_HTML, context)
+        plain = clean_email_text(render_to_string(settings.EMAIL_TEMPLATE_NAME_TEXT, context))
+        html = clean_email_text(render_to_string(settings.EMAIL_TEMPLATE_NAME_HTML, context))
         send_mail(
             subject=settings.EMAIL_SUBJECT,
             message=plain,
