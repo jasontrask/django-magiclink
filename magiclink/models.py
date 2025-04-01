@@ -11,6 +11,8 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 
+import unicodedata
+
 from . import settings
 from .utils import get_client_ip
 
